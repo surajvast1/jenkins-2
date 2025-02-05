@@ -6,10 +6,6 @@ pipeline {
             steps {
                 echo 'Creating virtual environment and installing dependencies...'
                 sh '''
-                python3 -m venv venv
-                source venv/bin/activate
-                pip install --upgrade pip
-                pip install flask  # Install flask for the app
                 pip install -r requirements.txt  # Install additional dependencies from requirements.txt
                 '''
             }
@@ -18,7 +14,6 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 sh '''
-                source venv/bin/activate
                 python3 -m unittest discover -s .
                 '''
             }
@@ -27,7 +22,6 @@ pipeline {
             steps {
                 echo 'Deploying application...'
                 sh '''
-                source venv/bin/activate
                 mkdir -p ${WORKSPACE}/python-app-deploy
                 cp ${WORKSPACE}/app.py ${WORKSPACE}/python-app-deploy/
                 '''
@@ -37,7 +31,6 @@ pipeline {
             steps {
                 echo 'Running application...'
                 sh '''
-                source venv/bin/activate
                 nohup python3 ${WORKSPACE}/python-app-deploy/app.py > ${WORKSPACE}/python-app-deploy/app.log 2>&1 &
                 echo $! > ${WORKSPACE}/python-app-deploy/app.pid
                 '''
@@ -47,7 +40,6 @@ pipeline {
             steps {
                 echo 'Testing application...'
                 sh '''
-                source venv/bin/activate
                 python3 ${WORKSPACE}/test_app.py
                 '''
             }
